@@ -1,83 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { useAccount,useConnect,createClient } from 'wagmi';
-import { configureChains } from 'wagmi'
-import { mainnet, polygon } from 'wagmi/chains'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { publicProvider } from 'wagmi/providers/public'
-import { abi, Contract_address } from "./Info";
+import { React, useState } from "react";
+import "@rainbow-me/rainbowkit/styles.css";
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  ConnectButton,
+} from "@rainbow-me/rainbowkit";
+import {
+  configureChains,
+  createClient,
+  goerli,
+  mainnet,
+  WagmiConfig,
+} from "wagmi";
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { ethers } from "ethers";
+import Stake_Button from "./Stake_Button";
+import "./App.css";
+import Withdraw_Button from "./Withdraw_Button";
 
-// const App = () => {
-//   const [contract, setContract] = useState(null);
-//   const [stakingAmount, setStakingAmount] = useState(0);
-//   const [withdrawAmount, setWithdrawAmount] = useState(0);
+export default function App() {
+  const { chains, provider } = configureChains(
+    [mainnet, goerli],
+    [alchemyProvider({ alchemyId: process.env.REACT_APP_ALCHEMY_API })]
+  );
 
-//   useEffect(() => {
-//     const init = async () => {
-//       if (window.ethereum) {
-//         const provider = new ethers.providers.Web3Provider(window.ethereum);
-//         const signer = provider.getSigner();
-//         const stakingReward = new ethers.Contract(Contract_address, abi, signer);
-//         setContract(stakingReward);
-//       }
-//     };
-//     init();
-//   }, []);
+  const { connectors } = getDefaultWallets({
+    appName: "My RainbowKit App",
+    chains,
+  });
 
-//   const handleStake = async () => {
-//     if (!contract || !stakingAmount) return;
-//     const tx = await contract.stake(ethers.utils.parseUnits(stakingAmount, 'ether'));
-//     await tx.wait();
-//     alert('Staked successfully');
-//   };
+  const wagmiClient = createClient({
+    autoConnect: false,
+    connectors,
+    provider,
+  });
 
-//   const handleWithdraw = async () => {
-//     if (!contract || !withdrawAmount) return;
-//     const tx = await contract.withdraw(ethers.utils.parseUnits(withdrawAmount, 'ether'));
-//     await tx.wait();
-//     alert('Withdrawn successfully');
-//   };
-
-//   return (
-//     <WagmiProvider>
-//       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-//         <h1>Staking Reward</h1>
-//         <WagmiConnect />
-//       </div>
-//       <div>
-//         <input
-//           type="number"
-//           value={stakingAmount}
-//           onChange={(e) => setStakingAmount(e.target.value)}
-//           placeholder="Amount to stake"
-//         />
-//         <button onClick={handleStake}>Stake</button>
-//       </div>
-//       <div>
-//         <input
-//           type="number"
-//           value={withdrawAmount}
-//           onChange={(e) => setWithdrawAmount(e.target.value)}
-//           placeholder="Amount to withdraw"
-//         />
-//         <button onClick={handleWithdraw}>Withdraw</button>
-//       </div>
-//     </WagmiProvider>
-//   );
-// };
-
-// export default App;
-
-
-
-const App = () => {
-  const {address} = useAccount()
-  const { connect, connectors } = useConnect()
   return (
-    <div></div>
-  )
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>
+        <div className="App">
+          <div className="header">
+            <h1 className="title">Welcome to Stake2Earn</h1>
+            <div style={{ position: "absolute", top: 20, right: 0 }}>
+              <ConnectButton />
+            </div>
+          </div>
+          <div className="button-container">
+            <Stake_Button />
+            <Withdraw_Button />
+            <div></div>
+          </div>
+        </div>
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
 }
-
-
-export default App
-

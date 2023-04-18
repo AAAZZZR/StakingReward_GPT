@@ -1,5 +1,8 @@
 {
-    "solidity.defaultCompiler": "remote",
-    "solidity.packageDefaultDependenciesDirectory": "",
-    "solidity.packageDefaultDependenciesContractsDirectory": ""
+  "solidity.defaultCompiler": "localNodeModule",
+  "solidity.packageDefaultDependenciesDirectory": "",
+  "solidity.packageDefaultDependenciesContractsDirectory": "",
+  "solidity.remappingsUnix": [
+    
+  ]
 }
